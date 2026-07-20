@@ -131,6 +131,11 @@ function model(table: string): any {
       if (error) throw error;
       return toRow(row);
     },
+    async updateMany({ where, data }: { where?: Record<string, any>; data: Record<string, unknown> }) {
+      const { data: rows, error } = await applyWhere(client().from(tableName).update(toColumns(data)).select(), where);
+      if (error) throw error;
+      return { count: rows?.length ?? 0 };
+    },
     async upsert({ where, create, update, data }: { where?: Record<string, unknown>; create?: Record<string, unknown>; update?: Record<string, unknown>; data?: Record<string, unknown> }) {
       const values = data ?? create ?? {};
       const whereKeys = Object.keys(where ?? {});
